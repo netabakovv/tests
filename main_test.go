@@ -17,3 +17,16 @@ func TestHelloEndpoint(t *testing.T) {
 		t.Errorf("expected status 200, got %d", res.StatusCode)
 	}
 }
+
+func TestServer(t *testing.T) {
+	go main()
+
+	resp, err := http.Get("http://localhost:8080/api/hello")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if resp.StatusCode != 200 {
+		t.Errorf("expected 200, got %d", resp.StatusCode)
+	}
+}
