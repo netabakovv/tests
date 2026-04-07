@@ -17,47 +17,16 @@ func TestHelloEndpoint(t *testing.T) {
 		t.Errorf("expected status 200, got %d", res.StatusCode)
 	}
 }
-func TestHelloEndpoint1(t *testing.T) {
-	req := httptest.NewRequest("GET", "/api/hello1", nil)
-	w := httptest.NewRecorder()
 
-	helloHandler(w, req)
+func TestServer(t *testing.T) {
+	go main()
 
-	res := w.Result()
-	if res.StatusCode != http.StatusOK {
-		t.Errorf("expected status 200, got %d", res.StatusCode)
+	resp, err := http.Get("http://localhost:8080/api/hello")
+	if err != nil {
+		t.Fatal(err)
 	}
-}
-func TestHelloEndpoint2(t *testing.T) {
-	req := httptest.NewRequest("GET", "/api/hello2", nil)
-	w := httptest.NewRecorder()
 
-	helloHandler(w, req)
-
-	res := w.Result()
-	if res.StatusCode != http.StatusOK {
-		t.Errorf("expected status 200, got %d", res.StatusCode)
-	}
-}
-func TestHelloEndpoint3(t *testing.T) {
-	req := httptest.NewRequest("GET", "/api/hello3", nil)
-	w := httptest.NewRecorder()
-
-	helloHandler(w, req)
-
-	res := w.Result()
-	if res.StatusCode != http.StatusOK {
-		t.Errorf("expected status 200, got %d", res.StatusCode)
-	}
-}
-func TestHelloEndpoint4(t *testing.T) {
-	req := httptest.NewRequest("GET", "/api/hello4", nil)
-	w := httptest.NewRecorder()
-
-	helloHandler(w, req)
-
-	res := w.Result()
-	if res.StatusCode != http.StatusOK {
-		t.Errorf("expected status 200, got %d", res.StatusCode)
+	if resp.StatusCode != 200 {
+		t.Errorf("expected 200, got %d", resp.StatusCode)
 	}
 }
