@@ -2,7 +2,7 @@ FROM golang:1.22-alpine AS builder
 WORKDIR /app
 COPY go.mod ./
 RUN go mod tidy
-COPY . .
+COPY .github/workflows .
 RUN go build -o app
 
 FROM alpine:latest
