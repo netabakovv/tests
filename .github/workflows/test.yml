@@ -35,3 +35,26 @@ jobs:
             echo "Coverage is below 80%"
             exit 1
           fi
+
+      - name: Build Docker image
+        run: docker build -t hello-api .
+
+      - name: Run container
+        run: docker run -d -p 8080:8080 --name hello-test hello-api
+
+      - name: Wait for container
+        run: sleep 3
+
+      - name: Test endpoint with curl
+        run: |
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8080/api/hello)
+          echo "Status: $STATUS"
+          if [ "$STATUS" -ne 200 ]; then
+            echo "Endpoint failed"
+            docker logs hello-test
+            exit 1
+          fi
+
+      - name: Stop container
+        if: always()
+        run: docker stop hello-test
