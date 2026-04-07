@@ -1,4 +1,4 @@
-name: Run Tests
+name: Go CI
 
 on:
   pull_request:
@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout
         uses: actions/checkout@v4
 
       - name: Setup Go
@@ -17,8 +17,21 @@ jobs:
         with:
           go-version: '1.22'
 
-      - name: Install dependencies
+      - name: Install deps
         run: go mod tidy
 
-      - name: Run tests
-        run: go test ./...
+      - name: Run tests with coverage
+        run: go test ./... -coverprofile=coverage.out
+
+      - name: Install bc
+        run: sudo apt-get install -y bc
+
+      - name: Check coverage >= 80%
+        run: |
+          COVERAGE=$(go tool cover -func=coverage.out | grep total | awk '{print $3}' | sed 's/%//')
+          echo "Coverage: $COVERAGE%"
+
+          if (( $(echo "$COVERAGE < 80" | bc -l) )); then
+            echo "Coverage is below 80%"
+            exit 1
+          fi
